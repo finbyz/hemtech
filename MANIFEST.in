@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include hemtech *.css
+recursive-include hemtech *.csv
+recursive-include hemtech *.html
+recursive-include hemtech *.ico
+recursive-include hemtech *.js
+recursive-include hemtech *.json
+recursive-include hemtech *.md
+recursive-include hemtech *.png
+recursive-include hemtech *.py
+recursive-include hemtech *.svg
+recursive-include hemtech *.txt
+recursive-exclude hemtech *.pyc
