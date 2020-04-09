@@ -116,6 +116,21 @@ doc_events = {
 		"onload": "hemtech.api.mn_onload",
 		"on_trash": "hemtech.api.mn_on_trash"
 	},
+	"Delivery Note": {
+		"before_naming": "hemtech.api.before_naming"
+	},
+	"Sales Invoice": {
+		"before_naming": "hemtech.api.before_naming"
+	},
+	"Purchase Invoice": {
+		"before_naming": "hemtech.api.before_naming"
+	},
+	"Purchase Order": {
+		"before_naming": "hemtech.api.before_naming"
+	},
+	"Purchase Receipt": {
+		"before_naming": "hemtech.api.before_naming"
+	},
 }
 
 # Scheduled Tasks

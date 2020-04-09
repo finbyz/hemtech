@@ -12,19 +12,19 @@ from frappe.contacts.doctype.contact.contact import get_contact_details, get_def
 
 @frappe.whitelist()
 def mn_validate(self, method):
-    self.flags.is_new_doc = self.is_new()
+	self.flags.is_new_doc = self.is_new()
 
 @frappe.whitelist()
 def mn_onload(self, method):
-    """Load address and contacts in `__onload`"""
-    load_address_and_contact(self)
+	"""Load address and contacts in `__onload`"""
+	load_address_and_contact(self)
 
 @frappe.whitelist()
 def mn_on_trash(self, method):
 	delete_contact_and_address('Manufacturer', self.name)
 
 def customer_group_filter(doctype, txt, searchfield, start, page_len, filters):
-    return frappe.db.sql("""select customer_name, customer_group from `tabCustomer` where customer_group = '%s'""" % filters.get('customer_group'))
+	return frappe.db.sql("""select customer_name, customer_group from `tabCustomer` where customer_group = '%s'""" % filters.get('customer_group'))
 
 @frappe.whitelist()
 def get_party_details(party=None, party_type="Customer", ignore_permissions=False):
@@ -92,3 +92,81 @@ def set_other_values(out, party, party_type):
 		to_copy = ["supplier_name", "supplier_type", "language"]
 	for f in to_copy:
 		out[f] = party.get(f)
+
+
+def check_sub_string(string, sub_string): 
+	"""Function to check if string has sub string"""
+
+	return not string.find(sub_string) == -1
+
+from erpnext.accounts.utils import get_fiscal_year
+
+@frappe.whitelist()
+def get_fiscal(date):
+	fy = get_fiscal_year(date)[0]
+	fiscal = frappe.db.get_value("Fiscal Year", fy, 'fiscal')
+
+	return fiscal if fiscal else fy.split("-")[0][2:] + fy.split("-")[1][2:]
+
+def naming_series_name(name, company_series = None):
+	from datetime import date
+	fiscal = get_fiscal(date.today())
+
+	if company_series:
+		name = name.replace('company_series', str(company_series))
+	
+	name = name.replace('YYYY', str(date.today().year))
+	name = name.replace('YY', str(date.today().year)[2:])
+	name = name.replace('MM', '%02d' % date.today().month)
+	name = name.replace('fiscal', str(fiscal))
+	name = name.replace('#', '')
+	name = name.replace('.', '')
+
+	return name
+
+# all whitelist functions bellow
+
+@frappe.whitelist()
+def check_counter_series(name, company_series = None):
+	"""Function to get series value for naming series"""
+	
+	# renaming the name for naming series
+	name = naming_series_name(name, company_series)
+	name = name.replace('.', '')
+	# frappe.throw(name)
+	# Checking the current series value
+	check = frappe.db.get_value('Series', name, 'current', order_by="name")
+	
+	# returning the incremented value of check for series value
+	if check == 0:
+		return 1
+	elif check == None:
+		# if no current value is found for naming series inserting that naming series with current value 0
+		frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format(name))
+		return 1
+	else:
+		return int(frappe.db.get_value('Series', name, 'current', order_by="name")) + 1
+
+@frappe.whitelist()
+def before_naming(self, method = None):
+	"""Function for naming the name of naming series"""
+
+	# if from is not ammended and series_value is greater than zero then 
+	if not self.amended_from:
+		if self.series_value:
+			if self.series_value > 0:
+				
+				# renaming the name for naming series
+				name = naming_series_name(self.naming_series, self.company_series)
+				name = name.replace('.', '')
+				# Checking the current series value
+				check = frappe.db.get_value('Series', name, 'current', order_by="name")
+				
+				# if no current value is found inserting 0 for current value for this naming series
+				if check == 0:
+					pass
+				elif not check:
+					frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format(name))
+				
+				# Updating the naming series decremented by 1 for current naming series
+				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(int(self.series_value) - 1, name))
