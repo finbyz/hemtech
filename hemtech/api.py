@@ -170,3 +170,10 @@ def before_naming(self, method = None):
 				
 				# Updating the naming series decremented by 1 for current naming series
 				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(int(self.series_value) - 1, name))
+
+def fiscal_before_save(self,method):
+	start_date = str(self.year_start_date)
+	end_date = str(self.year_end_date)
+
+	fiscal = start_date.split("-")[0][2:] + end_date.split("-")[0][2:]
+	self.fiscal = fiscal

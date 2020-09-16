@@ -120,6 +120,9 @@ doc_events = {
 	"Purchase Receipt": {
 		"before_naming": "hemtech.api.before_naming"
 	},
+	"Fiscal Year": {
+		'before_save': 'hemtech.api.fiscal_before_save'
+	},
 }
 
 # Scheduled Tasks
