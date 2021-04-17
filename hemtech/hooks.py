@@ -87,7 +87,7 @@ app_license = "GPL 3.0"
 # 		"on_trash": "method"
 #	}
 # }
-
+fixtures = ["Custom Field"]
 override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_roles_and_doctypes": "hemtech.permission.get_roles_and_doctypes",
 	"frappe.core.page.permission_manager.permission_manager.get_permissions": "hemtech.permission.get_permissions",

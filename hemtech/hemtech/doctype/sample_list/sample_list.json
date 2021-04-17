@@ -1,0 +1,97 @@
+{
+ "creation": "2018-02-14 16:58:48.560954",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sample_ref",
+  "ref_no",
+  "item",
+  "quantity",
+  "column_break_5",
+  "product_name",
+  "pss_qty",
+  "po_no",
+  "supply_site",
+  "amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "sample_ref",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sample Ref",
+   "options": "Outward Sample"
+  },
+  {
+   "fetch_from": "sample_ref.ref_no",
+   "fieldname": "ref_no",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Ref No"
+  },
+  {
+   "fetch_from": "sample_ref.item_code",
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "quantity",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Sample Qty"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "product_name",
+   "fieldtype": "Data",
+   "label": "Product Name",
+   "options": "sample_ref.item_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pss_qty",
+   "fieldtype": "Float",
+   "label": "PSS Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "po_no",
+   "fieldtype": "Data",
+   "label": "PO No",
+   "read_only": 1
+  },
+  {
+   "fieldname": "supply_site",
+   "fieldtype": "Data",
+   "label": "Supply Site",
+   "read_only": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount",
+   "options": "currency"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-04-05 11:06:51.873149",
+ "modified_by": "Administrator",
+ "module": "Hemtech",
+ "name": "Sample List",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
