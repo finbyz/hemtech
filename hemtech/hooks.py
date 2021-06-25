@@ -87,6 +87,13 @@ app_license = "GPL 3.0"
 # 		"on_trash": "method"
 #	}
 # }
+
+# e invoice hemtech
+import erpnext
+from hemtech.e_invoice_hemtech import get_party_details, make_einvoice
+erpnext.regional.india.e_invoice.utils.get_party_details = get_party_details
+erpnext.regional.india.e_invoice.utils.make_einvoice = make_einvoice
+
 fixtures = ["Custom Field"]
 override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_roles_and_doctypes": "hemtech.permission.get_roles_and_doctypes",
@@ -105,6 +112,9 @@ doc_events = {
 		"onload": "hemtech.api.mn_onload",
 		"on_trash": "hemtech.api.mn_on_trash"
 	},
+	"Stock Reconciliation":{
+		"validate":"hemtech.api.stock_reconciliation_validate"
+	},
 	"Delivery Note": {
 		"before_naming": "hemtech.api.before_naming"
 	},
@@ -119,7 +129,7 @@ doc_events = {
 	},
 	"Purchase Receipt": {
 		"before_naming": "hemtech.api.before_naming"
-	},
+	}
 }
 
 # Scheduled Tasks

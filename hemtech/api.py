@@ -170,3 +170,11 @@ def before_naming(self, method = None):
 				
 				# Updating the naming series decremented by 1 for current naming series
 				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(int(self.series_value) - 1, name))
+
+def stock_reconciliation_validate(self,method):
+	validate_batch_no_stock_reconciliaton(self)
+
+def validate_batch_no_stock_reconciliaton(self):
+	for item in self.items:
+		if frappe.db.get_value("Item",item.item_code,"has_batch_no"):
+			frappe.throw("In Items Row: {} and Item: {}, For Batch wise items do Material Issue and Material Receipt instead of Stock Reconciliation to avoid mismatch in Packages".format(frappe.bold(item.idx),frappe.bold(item.item_code)))
