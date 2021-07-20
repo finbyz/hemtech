@@ -134,6 +134,11 @@ doc_events = {
 
 # Scheduled Tasks
 # ---------------
+scheduler_events = {
+	"hourly": [
+		"hemtech.api.change_email_queue_status"
+	]
+}
 
 # scheduler_events = {
 # 	"all": [

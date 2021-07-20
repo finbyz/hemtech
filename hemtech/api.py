@@ -178,3 +178,21 @@ def validate_batch_no_stock_reconciliaton(self):
 	for item in self.items:
 		if frappe.db.get_value("Item",item.item_code,"has_batch_no"):
 			frappe.throw("In Items Row: {} and Item: {}, For Batch wise items do Material Issue and Material Receipt instead of Stock Reconciliation to avoid mismatch in Packages".format(frappe.bold(item.idx),frappe.bold(item.item_code)))
+
+@frappe.whitelist()
+def change_email_queue_status():
+	# from frappe.email.doctype.email_queue.email_queue import retry_sending
+	# from frappe.email.queue import send_one
+
+	eqs = frappe.db.sql("select name from `tabEmail Queue` where status = 'Error' and  creation > now() - interval 6 hour")
+	
+	if eqs:
+		for d in eqs:
+			# retry_sending(d.name)
+			# send_one(d.name, now=True)
+			doc = frappe.get_doc("Email Queue", d.name)
+			doc.status = "Not Sent"
+			doc.save(ignore_permissions=True)
+			#send_one(doc.name, now=True)
+		else:
+			frappe.db.commit()
