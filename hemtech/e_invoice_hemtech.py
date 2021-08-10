@@ -38,7 +38,8 @@ def get_party_details(address_name, is_shipping_address=False):
 
 def validate_address_fields(address, is_shipping_address):
 	# finbyz change remove gstin
-	if (not address.city
+	if ((not address.gstin and not is_shipping_address)
+		or not address.city
 		or not address.pincode
 		or not address.address_title
 		or not address.address_line1
@@ -80,7 +81,7 @@ def make_einvoice(invoice):
 		if invoice.gst_category == 'Overseas':
 			shipping_details = get_overseas_address_details(invoice.shipping_address_name)
 		else:
-			shipping_details = get_party_details(invoice.shipping_address_name) #finbyz
+			shipping_details = get_party_details(invoice.shipping_address_name,is_shipping_address=True) #finbyz
 	
 	if invoice.is_pos and invoice.base_paid_amount:
 		payment_details = get_payment_details(invoice)
