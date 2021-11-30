@@ -129,6 +129,9 @@ doc_events = {
 	},
 	"Purchase Receipt": {
 		"before_naming": "hemtech.api.before_naming"
+	},
+	"Lead":{
+		"before_naming": "finbyzerp.api.before_naming",
 	}
 }
 
