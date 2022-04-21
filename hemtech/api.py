@@ -9,6 +9,11 @@ from frappe.model.document import Document
 from frappe.contacts.address_and_contact import load_address_and_contact, delete_contact_and_address
 from frappe.contacts.doctype.address.address import get_address_display, get_default_address
 from frappe.contacts.doctype.contact.contact import get_contact_details, get_default_contact
+import datetime
+from frappe.utils import (
+	add_days,
+	today,
+)
 
 @frappe.whitelist()
 def mn_validate(self, method):
@@ -108,9 +113,10 @@ def get_fiscal(date):
 
 	return fiscal if fiscal else fy.split("-")[0][2:] + fy.split("-")[1][2:]
 
-def naming_series_name(name, company_series = None):
+def naming_series_name(name, fiscal = None, company_series = None):
 	from datetime import date
-	fiscal = get_fiscal(date.today())
+	if fiscal == None:
+		fiscal = ''
 
 	if company_series:
 		name = name.replace('company_series', str(company_series))
@@ -118,6 +124,7 @@ def naming_series_name(name, company_series = None):
 	name = name.replace('YYYY', str(date.today().year))
 	name = name.replace('YY', str(date.today().year)[2:])
 	name = name.replace('MM', '%02d' % date.today().month)
+	name = name.replace('DD', '%02d' % date.today().day)
 	name = name.replace('fiscal', str(fiscal))
 	name = name.replace('#', '')
 	name = name.replace('.', '')
@@ -127,11 +134,15 @@ def naming_series_name(name, company_series = None):
 # all whitelist functions bellow
 
 @frappe.whitelist()
-def check_counter_series(name, company_series = None):
+def check_counter_series(name, company_series = None, date = None):
 	"""Function to get series value for naming series"""
 	
+	if not date:
+		date = datetime.date.today()
+	
+	fiscal = get_fiscal(date)
 	# renaming the name for naming series
-	name = naming_series_name(name, company_series)
+	name = naming_series_name(name, fiscal, company_series)
 	name = name.replace('.', '')
 	# frappe.throw(name)
 	# Checking the current series value
@@ -196,3 +207,10 @@ def change_email_queue_status():
 			#send_one(doc.name, now=True)
 		else:
 			frappe.db.commit()
+
+def delete_email_queue():
+	from frappe.utils import add_days,today
+
+	frappe.db.sql(f"""DELETE FROM `tabEmail Queue` where modified < '{add_days(today(), -7)}'""")
+	frappe.db.sql(f"""DELETE FROM `tabEmail Queue Recipient` where modified < '{add_days(today(), -7)}""")
+	frappe.db.commit()

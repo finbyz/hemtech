@@ -140,7 +140,12 @@ doc_events = {
 scheduler_events = {
 	"hourly": [
 		"hemtech.api.change_email_queue_status"
-	]
+		],
+	"cron": {
+		"5 17 * * Sun": [
+			"hemtech.api.delete_email_queue",
+		]
+	},
 }
 
 # scheduler_events = {
