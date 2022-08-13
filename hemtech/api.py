@@ -209,8 +209,10 @@ def change_email_queue_status():
 			frappe.db.commit()
 
 def delete_email_queue():
+	frappe.enqueue("hemtech.api.delete_email_queue_job", queue='long')
+
+def delete_email_queue_job():
 	from frappe.utils import add_days,today
 
 	frappe.db.sql(f"""DELETE FROM `tabEmail Queue` where modified < '{add_days(today(), -7)}'""")
-	frappe.db.sql(f"""DELETE FROM `tabEmail Queue Recipient` where modified < '{add_days(today(), -7)}""")
-	frappe.db.commit()
+	frappe.db.sql(f"""DELETE FROM `tabEmail Queue Recipient` where modified < '{add_days(today(), -7)}'""")
