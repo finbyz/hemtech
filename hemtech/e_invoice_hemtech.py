@@ -4,10 +4,10 @@ import re
 import jwt
 from frappe import _
 from frappe.utils.data import cstr, cint, flt
-from erpnext.regional.india.e_invoice.utils import (read_json,get_transaction_details,get_item_list,sanitize_for_json,\
-	validate_mandatory_fields,get_doc_details,get_overseas_address_details,get_return_doc_reference,\
-	get_eway_bill_details,validate_totals,show_link_to_error_log,santize_einvoice_fields,safe_json_load,get_payment_details,\
-	get_invoice_value_details)
+# from erpnext.regional.india.e_invoice.utils import (read_json,get_transaction_details,get_item_list,sanitize_for_json,\
+# 	validate_mandatory_fields,get_doc_details,get_overseas_address_details,get_return_doc_reference,\
+# 	get_eway_bill_details,validate_totals,show_link_to_error_log,santize_einvoice_fields,safe_json_load,get_payment_details,\
+# 	get_invoice_value_details)
 
 from erpnext.regional.india.utils import get_place_of_supply
 import json
@@ -52,71 +52,72 @@ def validate_address_fields(address, skip_gstin_validation):
 
 
 def make_einvoice(invoice):
-	validate_mandatory_fields(invoice)
+	pass
+	# validate_mandatory_fields(invoice)
 
-	schema = read_json('einv_template')
+	# schema = read_json('einv_template')
 
-	transaction_details = get_transaction_details(invoice)
-	item_list = get_item_list(invoice)
-	doc_details = get_doc_details(invoice)
-	invoice_value_details = get_invoice_value_details(invoice)
-	seller_details = get_party_details(invoice.company_address)
+	# transaction_details = get_transaction_details(invoice)
+	# item_list = get_item_list(invoice)
+	# doc_details = get_doc_details(invoice)
+	# invoice_value_details = get_invoice_value_details(invoice)
+	# seller_details = get_party_details(invoice.company_address)
 
-	if invoice.gst_category == 'Overseas':
-		buyer_details = get_overseas_address_details(invoice.customer_address)
-	else:
-		buyer_details = get_party_details(invoice.customer_address)
-		place_of_supply = get_place_of_supply(invoice, invoice.doctype)
-		if place_of_supply:
-			place_of_supply = place_of_supply.split('-')[0]
-		else:
-			place_of_supply = invoice.billing_address_gstin[:2]
-		buyer_details.update(dict(place_of_supply=place_of_supply))
+	# if invoice.gst_category == 'Overseas':
+	# 	buyer_details = get_overseas_address_details(invoice.customer_address)
+	# else:
+	# 	buyer_details = get_party_details(invoice.customer_address)
+	# 	place_of_supply = get_place_of_supply(invoice, invoice.doctype)
+	# 	if place_of_supply:
+	# 		place_of_supply = place_of_supply.split('-')[0]
+	# 	else:
+	# 		place_of_supply = invoice.billing_address_gstin[:2]
+	# 	buyer_details.update(dict(place_of_supply=place_of_supply))
 
-	seller_details.update(dict(legal_name=invoice.company))
-	buyer_details.update(dict(legal_name=invoice.customer_name or invoice.customer))
+	# seller_details.update(dict(legal_name=invoice.company))
+	# buyer_details.update(dict(legal_name=invoice.customer_name or invoice.customer))
 	
-	shipping_details = payment_details = prev_doc_details = eway_bill_details = frappe._dict({})
-	if invoice.shipping_address_name and invoice.customer_address != invoice.shipping_address_name:
-		if invoice.gst_category == 'Overseas':
-			shipping_details = get_overseas_address_details(invoice.shipping_address_name)
-		else:
-			shipping_details = get_party_details(invoice.shipping_address_name,skip_gstin_validation=True) #finbyz
+	# shipping_details = payment_details = prev_doc_details = eway_bill_details = frappe._dict({})
+	# if invoice.shipping_address_name and invoice.customer_address != invoice.shipping_address_name:
+	# 	if invoice.gst_category == 'Overseas':
+	# 		shipping_details = get_overseas_address_details(invoice.shipping_address_name)
+	# 	else:
+	# 		shipping_details = get_party_details(invoice.shipping_address_name,skip_gstin_validation=True) #finbyz
 
-	dispatch_details = frappe._dict({})
-	if invoice.dispatch_address_name:
-		dispatch_details = get_party_details(invoice.dispatch_address_name, skip_gstin_validation=True)
+	# dispatch_details = frappe._dict({})
+	# if invoice.dispatch_address_name:
+	# 	dispatch_details = get_party_details(invoice.dispatch_address_name, skip_gstin_validation=True)
 
-	if invoice.is_pos and invoice.base_paid_amount:
-		payment_details = get_payment_details(invoice)
+	# if invoice.is_pos and invoice.base_paid_amount:
+	# 	payment_details = get_payment_details(invoice)
 	
-	if invoice.is_return and invoice.return_against:
-		prev_doc_details = get_return_doc_reference(invoice)
+	# if invoice.is_return and invoice.return_against:
+	# 	prev_doc_details = get_return_doc_reference(invoice)
 
-	if invoice.transporter and flt(invoice.distance) and not invoice.is_return:
-		eway_bill_details = get_eway_bill_details(invoice)
+	# if invoice.transporter and flt(invoice.distance) and not invoice.is_return:
+	# 	eway_bill_details = get_eway_bill_details(invoice)
 
-	# not yet implemented
-	period_details = export_details = frappe._dict({})
+	# # not yet implemented
+	# period_details = export_details = frappe._dict({})
 
-	einvoice = schema.format(
-		transaction_details=transaction_details, doc_details=doc_details, dispatch_details=dispatch_details,
-		seller_details=seller_details, buyer_details=buyer_details, shipping_details=shipping_details,
-		item_list=item_list, invoice_value_details=invoice_value_details, payment_details=payment_details,
-		period_details=period_details, prev_doc_details=prev_doc_details,
-		export_details=export_details, eway_bill_details=eway_bill_details
-	)
+	# einvoice = schema.format(
+	# 	transaction_details=transaction_details, doc_details=doc_details, dispatch_details=dispatch_details,
+	# 	seller_details=seller_details, buyer_details=buyer_details, shipping_details=shipping_details,
+	# 	item_list=item_list, invoice_value_details=invoice_value_details, payment_details=payment_details,
+	# 	period_details=period_details, prev_doc_details=prev_doc_details,
+	# 	export_details=export_details, eway_bill_details=eway_bill_details
+	# )
 	
-	try:
-		einvoice = safe_json_load(einvoice)
-		einvoice = santize_einvoice_fields(einvoice)
-	except Exception:
-		show_link_to_error_log(invoice, einvoice)
+	# try:
+	# 	einvoice = safe_json_load(einvoice)
+	# 	einvoice = santize_einvoice_fields(einvoice)
+	# except Exception:
+	# 	show_link_to_error_log(invoice, einvoice)
 
-	try:
-		validate_totals(einvoice)
-	except Exception:
-		log_error(einvoice)
-		raise
+	# try:
+	# 	validate_totals(einvoice)
+	# except Exception:
+	# 	log_error(einvoice)
+	# 	raise
 		
-	return einvoice
+	# return einvoice

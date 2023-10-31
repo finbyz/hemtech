@@ -89,10 +89,10 @@ app_license = "GPL 3.0"
 # }
 
 # e invoice hemtech
-import erpnext
-from hemtech.e_invoice_hemtech import get_party_details, make_einvoice
-erpnext.regional.india.e_invoice.utils.get_party_details = get_party_details
-erpnext.regional.india.e_invoice.utils.make_einvoice = make_einvoice
+# import erpnext
+# from hemtech.e_invoice_hemtech import get_party_details, make_einvoice
+# erpnext.regional.india.e_invoice.utils.get_party_details = get_party_details
+# erpnext.regional.india.e_invoice.utils.make_einvoice = make_einvoice
 
 fixtures = ["Custom Field"]
 override_whitelisted_methods = {
