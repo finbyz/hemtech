@@ -34,7 +34,7 @@
   {
    "fieldname": "count(package_item)",
    "fieldtype": "Int",
-   "label": "package_item",
+   "label": "Qty",
    "width": 0
   },
   {
@@ -53,14 +53,14 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "Hemlon (Warehouse)",
- "modified": "2023-10-31 16:41:27.985522",
- "modified_by": "Administrator",
+ "modified": "2024-02-24 11:28:36.036325",
+ "modified_by": "it@hemlon.com",
  "module": "Hemtech",
  "name": "Packing Material consumption Report - Hemlon",
  "owner": "it@hemlon.com",
  "prepared_report": 0,
  "query": "SELECT\r\n  `tabPackage Box`.purchase_date as \"Packing Date:Link/Package\",\r\n  `tabPackage Box`.company as \"Company:Link/Package:50\",\r\n  `tabPackage Box`.merge as \"Merge:Link/Package:50\",\r\n  `tabPackage Box`.package_type as \"Package Type:Link/Package:50\",\r\n  `tabPackage Box`.package_item as \"Package Item:Link/Package:50\",\r\n  count(package_item) as \"Packages:Int:25\",\r\n   sum(spools) as \"Spools:Int:25\"\r\nFROM\r\n  `tabPackage Box`\r\nWHERE\r\n  `tabPackage Box`.company='HEMLON SYNTHETICS PVT LTD'\r\n  AND `tabPackage Box`.warehouse='FG DTY - HL'\r\n  AND MONTH(`tabPackage Box`.purchase_date) = MONTH(CURDATE())\r\n  AND YEAR(`tabPackage Box`.purchase_date) = YEAR(CURDATE())\r\n \r\nGROUP BY\r\n  purchase_date DESC, company, warehouse, merge, package_type, package_item\r\nORDER BY \r\n  purchase_date DESC, company, warehouse, merge, package_type, package_item",
- "ref_doctype": "Package",
+ "ref_doctype": "Package Box",
  "report_name": "Packing Material consumption Report - Hemlon",
  "report_type": "Query Report",
  "roles": [

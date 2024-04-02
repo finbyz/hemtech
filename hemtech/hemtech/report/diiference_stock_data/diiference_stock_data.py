@@ -54,6 +54,8 @@ def get_data(filters):
         GROUP BY v_no, sle.item_code, sle.batch_no,se.reference_docname,se.reference_doctype,sle.voucher_type
     """, as_dict=True)
 
+
+
     final_data = []
     for row in data_for_stock_entry:
         pkg_data = pgk_dict.get((row.get('reference_docname'), row.get('item_code'), row.get('batch_no')))
