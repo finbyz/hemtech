@@ -16,7 +16,7 @@ app_license = "GPL 3.0"
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/hemtech/css/hemtech.css"
-# app_include_js = "/assets/hemtech/js/hemtech.js"
+app_include_js = "hemtech.bundle.js"
 
 
 # include js, css files in header of web template
@@ -95,6 +95,11 @@ app_license = "GPL 3.0"
 # erpnext.regional.india.e_invoice.utils.make_einvoice = make_einvoice
 
 fixtures = ["Custom Field"]
+override_doctype_class = {
+	"Payment Reconciliation":"hemtech.hemtech.override.doctype.payment_reconciliation.PaymentReconciliation",
+	"Stock Entry": "hemtech.hemtech.override.doctype.stock_entry.StockEntry",
+	"Work Order":"hemtech.hemtech.override.doctype.work_order.WorkOrder",
+}
 override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_roles_and_doctypes": "hemtech.permission.get_roles_and_doctypes",
 	"frappe.core.page.permission_manager.permission_manager.get_permissions": "hemtech.permission.get_permissions",
@@ -103,8 +108,10 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.remove": "hemtech.permission.remove",
 	"frappe.core.page.permission_manager.permission_manager.reset": "hemtech.permission.reset",
 	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "hemtech.permission.get_users_with_role",
-	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "hemtech.permission.get_standard_permissions"
-}
+	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "hemtech.permission.get_standard_permissions",
+	"erpnext.stock.utils.get_incoming_rate": "hemtech.hemtech.override.override_whitelisted_method.utils.get_incoming_rate",
+	"erpnext.stock.utils.get_valuation_rate": "hemtech.hemtech.override.override_whitelisted_method.stock_controller.make_quality_inspections",
+ }
 
 doc_events = {
 	"Manufacturer": {
@@ -112,27 +119,27 @@ doc_events = {
 		"onload": "hemtech.api.mn_onload",
 		"on_trash": "hemtech.api.mn_on_trash"
 	},
-	"Stock Reconciliation":{
-		"validate":"hemtech.api.stock_reconciliation_validate"
-	},
-	"Delivery Note": {
-		"before_naming": "hemtech.api.before_naming"
-	},
-	"Sales Invoice": {
-		"before_naming": "hemtech.api.before_naming"
-	},
-	"Purchase Invoice": {
-		"before_naming": "hemtech.api.before_naming"
-	},
-	"Purchase Order": {
-		"before_naming": "hemtech.api.before_naming"
-	},
-	"Purchase Receipt": {
-		"before_naming": "hemtech.api.before_naming"
-	},
-	"Lead":{
-		"before_naming": "finbyzerp.api.before_naming",
-	}
+	# "Stock Reconciliation":{
+	# 	"validate":"hemtech.api.stock_reconciliation_validate"
+	# },
+	# "Delivery Note": {
+	# 	"before_naming": "hemtech.api.before_naming"
+	# },
+	# "Sales Invoice": {
+	# 	"before_naming": "hemtech.api.before_naming"
+	# },
+	# "Purchase Invoice": {
+	# 	"before_naming": "hemtech.api.before_naming"
+	# },
+	# "Purchase Order": {
+	# 	"before_naming": "hemtech.api.before_naming"
+	# },
+	# "Purchase Receipt": {
+	# 	"before_naming": "hemtech.api.before_naming"
+	# },
+	# "Lead":{
+	# 	"before_naming": "finbyzerp.api.before_naming",
+	# }
 }
 
 # Scheduled Tasks
