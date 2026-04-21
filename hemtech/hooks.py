@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-from . import __version__ as app_version
 
 app_name = "hemtech"
 app_title = "Hemtech"
 app_publisher = "FinByz Tech Pvt Ltd"
 app_description = "Custom App for Hemtech"
-app_icon = "octicon octicon-globe"
-app_color = "#770515"
 app_email = "info@finbyz.com"
 app_license = "GPL 3.0"
 
@@ -27,7 +23,7 @@ app_include_js = "hemtech.bundle.js"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {"Material Request" : "public/js/material_request.js"}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}

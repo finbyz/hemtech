@@ -1,7 +1,6 @@
 # Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
 # MIT License. See license.txt
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _
 import frappe.defaults
@@ -14,12 +13,12 @@ from frappe.permissions import (reset_perms, get_linked_doctypes, get_all_perms,
 
 not_allowed_in_permission_manager = ["DocType", "DocField", "DocPerm", "User", "Role", "Has Role",
 	"Page", "Module Def", "Print Format", "Report", "Customize Form", "DocShare",
-	"Customize Form Field", "Property Setter", "Custom Field", "Custom Script", "Patch Log", "Transaction Log"]
+	"Customize Form Field", "Property Setter", "Custom Field", "Custom Script", "Patch Log"]
 
 @frappe.whitelist()
 def get_roles_and_doctypes():
 	frappe.only_for(("System Manager","Local Admin"))
-	send_translations(frappe.get_lang_dict("doctype", "DocPerm"))
+	send_translations(frappe.get_all("Translation", fields=["source_text", "translated_text"]))
 
 	active_domains = frappe.get_active_domains()
 

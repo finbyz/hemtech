@@ -2,13 +2,14 @@
 # Copyright (c) 2018, Finbyz Tech Pvt Ltd and contributors
 # For license information, please see license.txt
 
-from __future__ import unicode_literals
 import frappe
 from frappe import _, db
 from frappe.model.document import Document
 from frappe.contacts.address_and_contact import load_address_and_contact, delete_contact_and_address
 from frappe.contacts.doctype.address.address import get_address_display, get_default_address
 from frappe.contacts.doctype.contact.contact import get_contact_details, get_default_contact
+from frappe.model.mapper import get_mapped_doc
+from frappe.utils.data import flt
 import datetime
 from frappe.utils import (
 	add_days,
@@ -216,3 +217,71 @@ def delete_email_queue_job():
 
 	frappe.db.sql(f"""DELETE FROM `tabEmail Queue` where modified < '{add_days(today(), -7)}'""")
 	frappe.db.sql(f"""DELETE FROM `tabEmail Queue Recipient` where modified < '{add_days(today(), -7)}'""")
+
+
+@frappe.whitelist()
+def make_material_transfer(source_name, target_doc=None):
+   
+
+    def update_item(src_row, tgt_row, src_parent):
+        qty = flt(src_row.stock_qty) - flt(src_row.ordered_qty)
+        if qty < 0:
+            qty = 0
+
+        tgt_row.item_code = src_row.item_code
+        tgt_row.item_name = src_row.item_name
+        tgt_row.description = src_row.description
+        tgt_row.uom = src_row.uom
+        tgt_row.qty = qty
+        tgt_row.basic_rate = src_row.rate
+        # tgt_row.merge = src_row.merge
+        # tgt_row.grade = src_row.grade
+        # source warehouse from MR item
+        tgt_row.s_warehouse = src_row.from_warehouse or src_row.warehouse
+        tgt_row.t_warehouse = src_parent.set_warehouse
+
+    def set_missing_values(src, tgt):
+  
+        tgt.company = src.company
+        tgt.posting_date = frappe.utils.nowdate()
+        tgt.material_request = src.name
+        tgt.s_warehouse = src.set_from_warehouse
+        tgt.t_warehouse = src.set_warehouse
+
+
+    doc = get_mapped_doc(
+        "Material Request",
+        source_name,
+        {
+            "Material Request": {
+                "doctype": "Material Transfer",        
+                "field_map": {
+                    # map fields if names differ; example below
+                    # "set_from_warehouse": "from_warehouse",
+                    # "set_warehouse": "to_warehouse",
+					"name": "material_request_item",
+					"parent": "material_request",
+					"uom": "stock_uom",
+					"job_card_item": "job_card_item",
+                },
+                "validation": {
+                    "docstatus": ["=", 1],
+                    "material_request_type": ["=", "Material Transfer"],
+                },
+            },
+            "Material Request Item": {
+                "doctype": "Material Transfer Item",   # << your custom child doctype
+                "field_map": {
+                    # examples if your target fields differ
+                    # "uom": "stock_uom",
+                },
+                "postprocess": update_item,
+                "condition": lambda d: flt(d.stock_qty) > flt(d.ordered_qty),
+                # or simply: lambda d: flt(d.qty) > 0
+            },
+        },
+        target_doc,
+        set_missing_values,
+    )
+
+    return doc
