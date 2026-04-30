@@ -23,20 +23,20 @@ def get_roles_and_doctypes():
 	active_domains = frappe.get_active_domains()
 
 	doctypes = frappe.get_all("DocType", filters={
-		"istable": 0,
-		"name": ("not in", ",".join(not_allowed_in_permission_manager)),
-	}, or_filters={
-		"ifnull(restrict_to_domain, '')": "",
-		"restrict_to_domain": ("in", active_domains)
-	}, fields=["name"])
+			"istable": 0,
+			"name": ("not in", not_allowed_in_permission_manager),
+		}, or_filters=[
+			{"restrict_to_domain": ("in", active_domains)},
+			{"restrict_to_domain": ("is", "not set")},
+		], fields=["name"])
 
 	roles = frappe.get_all("Role", filters={
-		"name": ("not in", "Administrator", "System Manager"),
-		"disabled": 0,
-	}, or_filters={
-		"ifnull(restrict_to_domain, '')": "",
-		"restrict_to_domain": ("in", active_domains)
-	}, fields=["name"])
+			"name": ("not in", ["Administrator", "System Manager"]),
+			"disabled": 0,
+		}, or_filters=[
+			{"restrict_to_domain": ("in", active_domains)},
+			{"restrict_to_domain": ("is", "not set")},
+		], fields=["name"])
 
 	doctypes_list = [ {"label":_(d.get("name")), "value":d.get("name")} for d in doctypes]
 	roles_list = [ {"label":_(d.get("name")), "value":d.get("name")} for d in roles if d.get('name') != "System Manager"]

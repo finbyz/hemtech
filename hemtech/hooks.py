@@ -118,9 +118,9 @@ doc_events = {
 	# "Stock Reconciliation":{
 	# 	"validate":"hemtech.api.stock_reconciliation_validate"
 	# },
-	# "Delivery Note": {
-	# 	"before_naming": "hemtech.api.before_naming"
-	# },
+	"Delivery Note": {
+		"on_submit": "hemtech.hemtech.doc_events.delivery_note.send_qc_notification"
+	},
 	# "Sales Invoice": {
 	# 	"before_naming": "hemtech.api.before_naming"
 	# },

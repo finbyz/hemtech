@@ -10,10 +10,10 @@ from erpnext.stock.utils import get_avg_purchase_rate
 def get_incoming_rate(args, raise_error_if_no_rate=True):
 	"""Get Incoming Rate based on valuation method"""
 	from erpnext.stock.stock_ledger import (
-		get_batch_incoming_rate,
 		get_previous_sle,
 		get_valuation_rate,
 	)
+	from erpnext.stock.utils import get_incoming_rate as get_batch_incoming_rate
 
 	if isinstance(args, str):
 		args = json.loads(args)
