@@ -4,7 +4,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.Tran
 		erpnext.hide_company(this.frm); // v16: now accepts this.frm
 		this.set_dynamic_labels();
 		this.setup_sms();
-		// this.setup_quality_inspection(); // Finbyz Changes
+		this.setup_quality_inspection(); // Finbyz Changes
 		this.validate_has_items();
 		erpnext.utils.view_serial_batch_nos(this.frm); // v16: added
 		this.set_route_options_for_new_doc();           // v16: added

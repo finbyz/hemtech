@@ -6,6 +6,7 @@
       erpnext.hide_company(this.frm);
       this.set_dynamic_labels();
       this.setup_sms();
+      this.setup_quality_inspection();
       this.validate_has_items();
       erpnext.utils.view_serial_batch_nos(this.frm);
       this.set_route_options_for_new_doc();
@@ -63,4 +64,4 @@
     }
   };
 })();
-//# sourceMappingURL=hemtech.bundle.SGUY3T33.js.map
+//# sourceMappingURL=hemtech.bundle.X65IOOBZ.js.map
