@@ -105,7 +105,6 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.reset": "hemtech.permission.reset",
 	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "hemtech.permission.get_users_with_role",
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "hemtech.permission.get_standard_permissions",
-	"erpnext.stock.utils.get_incoming_rate": "hemtech.hemtech.override.override_whitelisted_method.utils.get_incoming_rate",
 	"erpnext.controllers.stock_controller.make_quality_inspections": "hemtech.hemtech.override.override_whitelisted_method.stock_controller.make_quality_inspections",
  }
 

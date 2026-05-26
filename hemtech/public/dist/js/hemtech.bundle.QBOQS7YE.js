@@ -14,7 +14,6 @@
     }
     setup_quality_inspection() {
       if (![
-        "Delivery Note",
         "Sales Invoice",
         "Purchase Receipt",
         "Purchase Invoice"
@@ -46,7 +45,8 @@
           item_code: row.doc.item_code,
           description: row.doc.description,
           item_serial_no: row.doc.serial_no ? row.doc.serial_no.split("\n")[0] : null,
-          batch_no: row.doc.batch_no
+          batch_no: row.doc.batch_no,
+          child_row_reference: row.doc.name
         };
       };
       this.frm.set_query("quality_inspection", "items", function(doc, cdt, cdn) {
@@ -57,6 +57,7 @@
             inspection_type,
             reference_name: doc.name,
             item_code: d.item_code,
+            child_row_reference: d.name,
             merge: d.merge
           }
         };
@@ -64,4 +65,4 @@
     }
   };
 })();
-//# sourceMappingURL=hemtech.bundle.X65IOOBZ.js.map
+//# sourceMappingURL=hemtech.bundle.QBOQS7YE.js.map

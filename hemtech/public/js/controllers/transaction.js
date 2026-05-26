@@ -15,7 +15,6 @@ erpnext.TransactionController = class TransactionController extends erpnext.Tran
 		// Finbyz Changes: excludes Subcontracting Receipt, uses simplified button logic
 		if (
 			![
-				"Delivery Note",
 				"Sales Invoice",
 				"Purchase Receipt",
 				"Purchase Invoice",
@@ -39,7 +38,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.Tran
 			this.frm.page.set_inner_btn_group_as_primary(__("Create"));
 		}
 
-		const inspection_type = ["Purchase Receipt", "Purchase Invoice"].includes(
+		const inspection_type = ["Purchase Receipt", "Purchase Invoice",].includes(
 			// Finbyz Changes: excludes Subcontracting Receipt from Incoming check
 			this.frm.doc.doctype
 		)
@@ -58,6 +57,7 @@ erpnext.TransactionController = class TransactionController extends erpnext.Tran
 				description: row.doc.description,
 				item_serial_no: row.doc.serial_no ? row.doc.serial_no.split("\n")[0] : null,
 				batch_no: row.doc.batch_no,
+				child_row_reference: row.doc.name
 			};
 		};
 
@@ -65,12 +65,12 @@ erpnext.TransactionController = class TransactionController extends erpnext.Tran
 			let d = locals[cdt][cdn];
 			return {
 				filters: {
-					docstatus: 1,              // Finbyz Changes: v16 uses ["<", 2]; kept as 1
+					docstatus: 1,
 					inspection_type: inspection_type,
 					reference_name: doc.name,
 					item_code: d.item_code,
-					merge: d.merge,            // Finbyz Changes: custom field
-					// child_row_reference omitted (v16 addition)
+					child_row_reference: d.name,
+					merge: d.merge,
 				},
 			};
 		});

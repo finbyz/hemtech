@@ -4,7 +4,9 @@ from frappe import _
 from frappe.utils import flt
 
 @frappe.whitelist()
-def make_quality_inspections(doctype, docname, items):
+def make_quality_inspections(
+	company: str, doctype: str, docname: str, items: str | list, inspection_type: str
+):
 	if isinstance(items, str):
 		items = json.loads(items)
 
@@ -23,8 +25,9 @@ def make_quality_inspections(doctype, docname, items):
 
 		quality_inspection = frappe.get_doc(
 			{
+				"company": company,
 				"doctype": "Quality Inspection",
-				"inspection_type": "Incoming",
+				"inspection_type": inspection_type,
 				"inspected_by": frappe.session.user,
 				"reference_type": doctype,
 				"reference_name": docname,
@@ -33,9 +36,10 @@ def make_quality_inspections(doctype, docname, items):
 				"sample_size": flt(item.get("sample_size")),
 				"item_serial_no": item.get("serial_no").split("\n")[0] if item.get("serial_no") else None,
 				"batch_no": item.get("batch_no"),
-				"merge":item.get('merge'), # Finbyz Changes
+				"merge": item.get("merge"),
+				"": item.get("child_row_reference"),
 			}
-		).insert()
+		)
 		quality_inspection.save()
 		inspections.append(quality_inspection.name)
 
