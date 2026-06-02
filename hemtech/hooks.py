@@ -92,7 +92,6 @@ doctype_js = {"Material Request" : "public/js/material_request.js"}
 
 fixtures = ["Custom Field"]
 override_doctype_class = {
-	"Payment Reconciliation":"hemtech.hemtech.override.doctype.payment_reconciliation.PaymentReconciliation",
 	"Stock Entry": "hemtech.hemtech.override.doctype.stock_entry.StockEntry",
 	"Work Order":"hemtech.hemtech.override.doctype.work_order.WorkOrder",
 }
@@ -180,3 +179,11 @@ scheduler_events = {
 # 	"frappe.desk.doctype.event.event.get_events": "hemtech.event.get_events"
 # }
 
+
+
+# pyrefly: ignore [missing-import]
+from hemtech.hemtech.override.doctype.payment_reconciliation import reconcile_dr_cr_note
+# posting date change
+# pyrefly: ignore [missing-import]
+import erpnext.accounts.doctype.payment_reconciliation.payment_reconciliation as payment_reconciliation_module
+payment_reconciliation_module.reconcile_dr_cr_note = reconcile_dr_cr_note
