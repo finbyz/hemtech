@@ -76,13 +76,13 @@ doctype_js = {"Material Request" : "public/js/material_request.js"}
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
+doc_events = {
+	"Payment Entry": {
+		"validate": "hemtech.hemtech.doc_events.payment_entry.validate",
+		# "on_cancel": "method",
+		# "on_trash": "method"
+	}
+}
 
 # e invoice hemtech
 # import erpnext
