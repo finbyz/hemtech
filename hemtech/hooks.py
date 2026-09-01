@@ -76,13 +76,13 @@ doctype_js = {"Material Request" : "public/js/material_request.js"}
 # ---------------
 # Hook on document methods and events
 
-doc_events = {
-	"Payment Entry": {
-		"validate": "hemtech.hemtech.doc_events.payment_entry.validate",
-		# "on_cancel": "method",
-		# "on_trash": "method"
-	}
-}
+# doc_events = {
+# 	"Payment Entry": {
+# 		"validate": "hemtech.hemtech.doc_events.payment_entry.validate",
+# 		# "on_cancel": "method",
+# 		# "on_trash": "method"
+# 	}
+# }
 
 # e invoice hemtech
 # import erpnext
@@ -119,6 +119,12 @@ doc_events = {
 	"Delivery Note": {
 		"on_submit": "hemtech.hemtech.doc_events.delivery_note.send_qc_notification"
 	},
+	"Payment Entry": {
+ 		"validate": "hemtech.hemtech.doc_events.payment_entry.validate",
+	},
+	"Sales Order": {
+        "validate": "hemtech.hemtech.doc_events.sales_order.fetch_gst_treatment_from_item_group",
+    },
 	# "Sales Invoice": {
 	# 	"before_naming": "hemtech.api.before_naming"
 	# },

@@ -7,5 +7,5 @@ def validate(self, method):
     if self.payment_type == "Pay":
         if self.references:
             outstanding = sum([flt(row.outstanding_amount) for row in self.references])
-            if outstanding < self.paid_amount:
+            if  self.paid_amount > outstanding:
                 frappe.throw(_("Paid amount is more than outstanding amount"))
