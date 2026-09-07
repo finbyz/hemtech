@@ -26,7 +26,7 @@ class StockEntry(_StockEntry):
             # Find the matching Stock Entry Detail row
             voucher_detail_no = sle.get("voucher_detail_no")
             for d in self.items:
-                if d.name == voucher_detail_no and (d.is_legacy_scrap_item or d.type):
+                if d.name == voucher_detail_no and (d.get("is_legacy_scrap_item") or d.get("type") or d.get("secondary_item_type")):
                     sle["recalculate_rate"] = 1
                     break
 
