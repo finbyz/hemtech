@@ -26,7 +26,7 @@ class StockEntry(_StockEntry):
             # Find the matching Stock Entry Detail row
             voucher_detail_no = sle.get("voucher_detail_no")
             for d in self.items:
-                if d.name == voucher_detail_no and (d.get("is_legacy_scrap_item") or d.get("type") or d.get("secondary_item_type")):
+                if d.name == voucher_detail_no and (d.get("is_legacy_scrap_item") or d.get("type") == "Scrap" or d.get("secondary_item_type") == "Scrap"):
                     sle["recalculate_rate"] = 1
                     break
 
@@ -68,19 +68,19 @@ class StockEntry(_StockEntry):
         precision = frappe.get_precision("Stock Entry Detail", "qty")
         for d in item_dict:
             item_row = item_dict[d]
+            stock_uom = item_row.get("stock_uom") or frappe.db.get_value("Item", d, "stock_uom")
 
             child_qty = flt(item_row["qty"], precision)
             if (
                 not self.is_return
                 and child_qty <= 0
-                and not item_row.get("type")
-                and not item_row.get("is_legacy_scrap_item")
+                and not item_row.get("secondary_item_type")
+                and not item_row.get("valuation_type")
             ):
                 if self.purpose not in ["Receive from Customer", "Send to Subcontractor"]:
                     continue
 
             se_child = self.append("items")
-            stock_uom = item_row.get("stock_uom") or frappe.db.get_value("Item", d, "stock_uom")
             se_child.s_warehouse = item_row.get("from_warehouse")
             se_child.t_warehouse = item_row.get("to_warehouse")
             se_child.item_code = item_row.get("item_code") or cstr(d)
@@ -93,18 +93,20 @@ class StockEntry(_StockEntry):
                 item_row, company=self.company
             )
             se_child.is_finished_item = item_row.get("is_finished_item", 0)
-            # se_child.is_scrap_item = item_row.get("is_scrap_item", 0)
+            se_child.is_scrap_item = item_row.get("is_scrap_item", 0)
+            se_child.secondary_item_type = item_row.get("secondary_item_type") 
+            se_child.is_legacy_scrap_item = item_row.get("is_legacy_scrap_item", 0) if item_row.get("is_legacy_scrap_item", 0) else item_row.get("secondary_item_type") == "Scrap"  
             se_child.po_detail = item_row.get("po_detail")
-            
             se_child.sco_rm_detail = item_row.get("sco_rm_detail")
-            se_child.merge = item_row.get("merge")
-            
-            se_child.scio_detail = item_row.get("scio_detail")
-            se_child.sample_quantity = item_row.get("sample_quantity", 0)
-            se_child.type = item_row.get("type")
-            se_child.is_legacy_scrap_item = 1 if item_row.get("type") == "Scrap" else 0
+            se_child.scio_detail = item_row.get("scio_detail")               
+            se_child.sample_quantity = item_row.get("sample_quantity", 0)    
+            se_child.valuation_type = item_row.get("valuation_type")        
+            se_child.bom_secondary_item = item_row.get("name") or item_row.get("bom_secondary_item") # restored
+            se_child.merge = item_row.get("merge")  # Finbyz Changes
 
-            se_child.bom_secondary_item = item_row.get("name") or item_row.get("bom_secondary_item")
+            if item_row.get("valuation_type") == "Manual":                   # restored
+                se_child.set_basic_rate_manually = 1
+                se_child.basic_rate = flt(item_row.get("manual_rate"))
 
             for field in [
                 self.subcontract_data.rm_detail_field,
@@ -112,9 +114,9 @@ class StockEntry(_StockEntry):
                 "expense_account",
                 "description",
                 "item_name",
-                "serial_and_batch_bundle",
+                "serial_and_batch_bundle",   # restored
                 "allow_zero_valuation_rate",
-                "use_serial_batch_fields",
+                "use_serial_batch_fields",   # restored
                 "batch_no",
                 "serial_no",
             ]:
@@ -126,11 +128,9 @@ class StockEntry(_StockEntry):
             if se_child.t_warehouse is None:
                 se_child.t_warehouse = self.to_warehouse
 
-            # in stock uom
             se_child.conversion_factor = flt(item_row.get("conversion_factor")) or 1
             se_child.transfer_qty = flt(
                 item_row["qty"] * se_child.conversion_factor, se_child.precision("qty")
             )
-
-            se_child.bom_no = bom_no  # to be assigned for finished item
+            se_child.bom_no = bom_no
             se_child.job_card_item = item_row.get("job_card_item") if self.get("job_card") else None
